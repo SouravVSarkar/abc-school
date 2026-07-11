@@ -7,21 +7,23 @@ import cors from "cors"
 
 
 dotenv.config()
-const port=process.env.PORT
+const PORT = process.env.PORT || 3000;
 const app=express()
 
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin:"http://localhost:5173",
-    credentials:true
+    origin: true,
+    credentials: true
 }))
 app.use(express.json());
 app.use("/api/auth",authRouter)
 
 
-app.listen(port,()=>{
-    console.log("sarver sarted...")
-    connectDb()
-    
-})
+
+
+connectDb();
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
