@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const resultSchema = mongoose.Schema({
     class:{
-        typeof:Number,
-        require:true
+        type:Number,
+        required:true
     },
     examName:{
         type:String,
@@ -20,13 +20,13 @@ const resultSchema = mongoose.Schema({
                 required:true
             },
             time:{
-                type:time,
+                type:String,
                 required:true
 
             },
             duration:{
                 type:Number,
-                requifred:true
+                required:true
             }
         }
     ]
