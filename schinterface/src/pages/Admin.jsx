@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Admin.css";
 import Register from "../Student/RegisterStudent"; // Route target component
+import StudentSearch from "../Student/ViewProfile";
+import CreateExam from "../Student/UpdateExamSchedule";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -38,6 +40,17 @@ function AdminDashboard() {
       case "Register A Student":
         navigate("/register-student");
         break;
+
+      case "View Student Profile":
+      navigate("/view-profile");
+      break;
+
+        case "Admit-Exam Activities":
+      navigate("/create-exam");
+      break;
+
+      
+       
 
       default:
         alert(`${title} page is not implemented yet.`);
