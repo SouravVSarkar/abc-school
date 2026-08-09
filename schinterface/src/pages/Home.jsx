@@ -7,7 +7,7 @@ function App() {
     <div>
       {/* Navbar */}
       <nav className="navbar">
-        <h2>ABC Primary School</h2>
+        <h2>Little Stars Academy</h2>
 
         <ul className="nav-links">
           <li><a href="#">Home</a></li>

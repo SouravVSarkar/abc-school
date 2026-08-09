@@ -57,10 +57,24 @@ function StudentSearch() {
             required
             style={{ width: "100%", padding: "8px" }}
           />
-        </div>
+        </div> 
 
         <div style={{ marginBottom: "15px" }}>
-          <label>Roll / Registration</label>
+          <label>Roll</label>
+          <br />
+          <input
+            type="text"
+            value={StudentRoll}
+            onChange={(e) => setStudentClass(e.target.value)}
+            placeholder="Enter Class"
+            required
+            style={{ width: "100%", padding: "8px" }}
+          />
+        </div>
+
+
+        <div style={{ marginBottom: "15px" }}>
+          <label>Or Registration</label>
           <br />
           <input
             type="text"
