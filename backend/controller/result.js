@@ -1,4 +1,4 @@
-import StudentResult from "../models/results.model";
+import StudentResult from "../models/results.model.js";
 
 
 // Add student result
