@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const subjectSchema = new mongoose.Schema(
+ const subjectSchema = new mongoose.Schema(
     {
         subject: {
             type: String,
@@ -66,4 +66,4 @@ const StudentResult = mongoose.model(
     studentResultSchema
 );
 
-module.exports = StudentResult;
+export default StudentResult
