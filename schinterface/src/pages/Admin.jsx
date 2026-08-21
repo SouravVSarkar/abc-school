@@ -4,6 +4,7 @@ import "../styles/Admin.css";
 import Register from "../Student/RegisterStudent"; // Route target component
 import StudentSearch from "../Student/ViewProfile";
 import CreateExam from "../Student/UpdateExamSchedule";
+import AdminResult from "../Student/Result";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -48,6 +49,11 @@ function AdminDashboard() {
         case "Admit-Exam Activities":
       navigate("/create-exam");
       break;
+
+       case "Results":
+      navigate("/student-result");
+      break;
+
 
       
        
