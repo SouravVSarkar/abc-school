@@ -1,4 +1,4 @@
-const StudentResult = require("../models/StudentResult");
+import StudentResult from "../models/results.model";
 
 
 // Add student result
