@@ -2,20 +2,25 @@ import { useState } from "react";
 
 function StudentSearch() {
   const [studentClass, setStudentClass] = useState("");
-  const [id, setId] = useState("");
+  const [Registration, setRegistration] = useState("");
+  const [StudentRoll, setStudentRoll]=useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if( !studentClass || (!StudentRoll && !Registration)) {
+      alert("Enter Class and Roll or Registraton")
+      return;
+    }
     try {
-      const response = await fetch("http://localhost:3000/api/student/result", {
+      const response = await fetch("http://localhost:3000/api/auth/viewstudent", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           class: studentClass,
-          id: id,
+          StudentRoll:StudentRoll,
+          Registration: Registration
         }),
       });
 
@@ -43,20 +48,29 @@ function StudentSearch() {
         borderRadius: "8px",
       }}
     >
-      <h2>Student Result</h2>
+      
 
       <form onSubmit={handleSubmit}>
+      
         <div style={{ marginBottom: "15px" }}>
           <label>Class</label>
           <br />
-          <input
+          <select
             type="text"
             value={studentClass}
             onChange={(e) => setStudentClass(e.target.value)}
             placeholder="Enter Class"
-            required
+           
             style={{ width: "100%", padding: "8px" }}
-          />
+          >
+
+            <option value="">Select</option>
+          <option value="1">Class 1</option>
+          <option value="2">Class 2</option>
+          <option value="2">Class 3</option>
+          <option value="2">Class 4</option>
+
+          </select>
         </div> 
 
         <div style={{ marginBottom: "15px" }}>
@@ -65,23 +79,28 @@ function StudentSearch() {
           <input
             type="text"
             value={StudentRoll}
-            onChange={(e) => setStudentClass(e.target.value)}
-            placeholder="Enter Class"
-            required
+            
+            onChange={(e)=> setStudentRoll(e.target.value)}
+            placeholder="Enter Roll"
+          
             style={{ width: "100%", padding: "8px" }}
           />
-        </div>
 
+          
+
+          
+        </div>
+            <h3>OR</h3>
 
         <div style={{ marginBottom: "15px" }}>
-          <label>Or Registration</label>
+          <label>Registration</label>
           <br />
           <input
             type="text"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
-            placeholder="Enter Roll or Registration"
-            required
+            value={Registration}
+            onChange={(e) => setRegistration(e.target.value)}
+            placeholder="Registration"
+
             style={{ width: "100%", padding: "8px" }}
           />
         </div>
