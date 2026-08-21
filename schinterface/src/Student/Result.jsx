@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import axios from "axios";
+import "./AdminResult.css";
 
 function AdminResult() {
 
@@ -17,6 +19,11 @@ function AdminResult() {
         }
     ]);
 
+    const [savedResult, setSavedResult] = useState(null);
+
+    const [loading, setLoading] = useState(false);
+
+
     const subjectList = [
         "Bengali",
         "English",
@@ -31,15 +38,19 @@ function AdminResult() {
         "Economics"
     ];
 
-    // student information change
+
+    // Student information
     const handleStudentChange = (e) => {
+
         setStudent({
             ...student,
             [e.target.name]: e.target.value
         });
+
     };
 
-    // subject/marks change
+
+    // Subject and marks
     const handleSubjectChange = (index, field, value) => {
 
         const updatedSubjects = [...subjects];
@@ -47,9 +58,11 @@ function AdminResult() {
         updatedSubjects[index][field] = value;
 
         setSubjects(updatedSubjects);
+
     };
 
-    // add another subject
+
+    // Add subject
     const addSubject = () => {
 
         setSubjects([
@@ -59,9 +72,11 @@ function AdminResult() {
                 marks: ""
             }
         ]);
+
     };
 
-    // remove subject
+
+    // Remove subject
     const removeSubject = (index) => {
 
         const updatedSubjects = subjects.filter(
@@ -69,48 +84,483 @@ function AdminResult() {
         );
 
         setSubjects(updatedSubjects);
+
     };
 
-    // submit form
-    const handleSubmit = (e) => {
+
+    // Submit result to backend
+    const handleSubmit = async (e) => {
 
         e.preventDefault();
 
-        const resultData = {
-            ...student,
+        setLoading(true);
+
+        const formData = {
+            name: student.name,
+            className: student.className,
+            roll: student.roll,
+            registration: student.registration,
+            examYear: student.examYear,
             subjects: subjects
         };
 
-        console.log("Student Result:");
-        console.log(resultData);
 
-        alert("Student result saved successfully!");
+        try {
+
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_URL}/api/student-result/add`,
+                formData
+            );
+
+
+            console.log(response.data);
+
+
+            // Save returned database result
+            setSavedResult(
+                response.data.result
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                error.response?.data?.message ||
+                "Failed to save result"
+            );
+
+        } finally {
+
+            setLoading(false);
+
+        }
+
     };
+
+
+    // Add another result
+    const addAnotherResult = () => {
+
+        setStudent({
+            name: "",
+            className: "",
+            roll: "",
+            registration: "",
+            examYear: ""
+        });
+
+        setSubjects([
+            {
+                subject: "",
+                marks: ""
+            }
+        ]);
+
+        setSavedResult(null);
+
+    };
+
+
+    // Download marksheet
+    const downloadMarksheet = () => {
+
+        if (!savedResult) {
+            return;
+        }
+
+
+        const totalMarks =
+            savedResult.subjects.reduce(
+                (total, item) =>
+                    total + Number(item.marks),
+                0
+            );
+
+
+        const percentage =
+            totalMarks /
+            savedResult.subjects.length;
+
+
+        const marksheetHTML = `
+
+        <!DOCTYPE html>
+
+        <html>
+
+        <head>
+
+            <meta charset="UTF-8">
+
+            <title>Marksheet</title>
+
+            <style>
+
+                body {
+                    font-family: Arial, sans-serif;
+                    background: #eeeeee;
+                    margin: 0;
+                    padding: 30px;
+                }
+
+                .marksheet {
+
+                    width: 800px;
+
+                    margin: auto;
+
+                    background: white;
+
+                    padding: 40px;
+
+                    border: 2px solid #222;
+
+                }
+
+                .school-name {
+
+                    text-align: center;
+
+                    font-size: 28px;
+
+                    font-weight: bold;
+
+                    margin-bottom: 5px;
+
+                }
+
+                .school-address {
+
+                    text-align: center;
+
+                    margin-bottom: 25px;
+
+                }
+
+                .title {
+
+                    text-align: center;
+
+                    font-size: 22px;
+
+                    font-weight: bold;
+
+                    margin-bottom: 25px;
+
+                    border-bottom: 2px solid black;
+
+                    padding-bottom: 10px;
+
+                }
+
+                .student-info {
+
+                    display: grid;
+
+                    grid-template-columns: 1fr 1fr;
+
+                    gap: 12px;
+
+                    margin-bottom: 25px;
+
+                }
+
+                table {
+
+                    width: 100%;
+
+                    border-collapse: collapse;
+
+                }
+
+                th, td {
+
+                    border: 1px solid black;
+
+                    padding: 12px;
+
+                    text-align: center;
+
+                }
+
+                th {
+
+                    background: #eeeeee;
+
+                }
+
+                .summary {
+
+                    margin-top: 25px;
+
+                    display: flex;
+
+                    justify-content: space-between;
+
+                    font-weight: bold;
+
+                }
+
+                .signature {
+
+                    margin-top: 80px;
+
+                    display: flex;
+
+                    justify-content: space-between;
+
+                }
+
+                @media print {
+
+                    body {
+
+                        background: white;
+
+                        padding: 0;
+
+                    }
+
+                    .marksheet {
+
+                        border: 2px solid black;
+
+                    }
+
+                }
+
+            </style>
+
+        </head>
+
+
+        <body>
+
+            <div class="marksheet">
+
+                <div class="school-name">
+                    ABC SCHOOL
+                </div>
+
+                <div class="school-address">
+                    School Examination Department
+                </div>
+
+
+                <div class="title">
+                    MARKSHEET
+                </div>
+
+
+                <div class="student-info">
+
+                    <div>
+                        <strong>Name:</strong>
+                        ${savedResult.name}
+                    </div>
+
+                    <div>
+                        <strong>Class:</strong>
+                        ${savedResult.className}
+                    </div>
+
+                    <div>
+                        <strong>Roll:</strong>
+                        ${savedResult.roll}
+                    </div>
+
+                    <div>
+                        <strong>Registration:</strong>
+                        ${savedResult.registration}
+                    </div>
+
+                    <div>
+                        <strong>Exam Year:</strong>
+                        ${savedResult.examYear}
+                    </div>
+
+                </div>
+
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Sl. No.</th>
+
+                            <th>Subject</th>
+
+                            <th>Marks</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        ${savedResult.subjects.map(
+                            (item, index) => `
+
+                            <tr>
+
+                                <td>
+                                    ${index + 1}
+                                </td>
+
+                                <td>
+                                    ${item.subject}
+                                </td>
+
+                                <td>
+                                    ${item.marks}
+                                </td>
+
+                            </tr>
+
+                        `).join("")}
+
+                    </tbody>
+
+                </table>
+
+
+                <div class="summary">
+
+                    <div>
+                        Total Marks:
+                        ${totalMarks}
+                    </div>
+
+                    <div>
+                        Percentage:
+                        ${percentage.toFixed(2)}%
+                    </div>
+
+                </div>
+
+
+                <div class="signature">
+
+                    <div>
+                        Class Teacher
+                    </div>
+
+                    <div>
+                        Principal
+                    </div>
+
+                </div>
+
+            </div>
+
+        </body>
+
+        </html>
+
+        `;
+
+
+        const blob = new Blob(
+            [marksheetHTML],
+            {
+                type: "text/html"
+            }
+        );
+
+
+        const url = URL.createObjectURL(blob);
+
+
+        const link = document.createElement("a");
+
+        link.href = url;
+
+        link.download =
+            `${savedResult.name}-${savedResult.examYear}-marksheet.html`;
+
+        link.click();
+
+
+        URL.revokeObjectURL(url);
+
+    };
+
+
+    // After successful submission
+    if (savedResult) {
+
+        return (
+
+            <div className="success-container">
+
+                <h2>
+                    Result Saved Successfully
+                </h2>
+
+                <p>
+                    {savedResult.name}'s result has been
+                    successfully saved.
+                </p>
+
+
+                <div className="result-actions">
+
+                    <button
+                        onClick={downloadMarksheet}
+                    >
+                        Download Marksheet
+                    </button>
+
+
+                    <button
+                        onClick={addAnotherResult}
+                    >
+                        Add Another Result
+                    </button>
+
+                </div>
+
+            </div>
+
+        );
+
+    }
+
 
     return (
 
         <div className="admin-container">
 
-            <h1>Student Result Entry</h1>
+            <h1>
+                Student Result Entry
+            </h1>
+
 
             <form onSubmit={handleSubmit}>
 
-                {/* Student Information */}
-
                 <div className="student-information">
 
-                    <h2>Student Information</h2>
+                    <h2>
+                        Student Information
+                    </h2>
+
 
                     <div className="form-group">
 
-                        <label>Student Name</label>
+                        <label>
+                            Student Name
+                        </label>
 
                         <input
                             type="text"
                             name="name"
                             value={student.name}
                             onChange={handleStudentChange}
-                            placeholder="Enter student name"
                             required
                         />
 
@@ -119,7 +569,9 @@ function AdminResult() {
 
                     <div className="form-group">
 
-                        <label>Class</label>
+                        <label>
+                            Class
+                        </label>
 
                         <select
                             name="className"
@@ -132,13 +584,33 @@ function AdminResult() {
                                 Select Class
                             </option>
 
-                            <option value="6">Class 6</option>
-                            <option value="7">Class 7</option>
-                            <option value="8">Class 8</option>
-                            <option value="9">Class 9</option>
-                            <option value="10">Class 10</option>
-                            <option value="11">Class 11</option>
-                            <option value="12">Class 12</option>
+                            <option value="6">
+                                Class 6
+                            </option>
+
+                            <option value="7">
+                                Class 7
+                            </option>
+
+                            <option value="8">
+                                Class 8
+                            </option>
+
+                            <option value="9">
+                                Class 9
+                            </option>
+
+                            <option value="10">
+                                Class 10
+                            </option>
+
+                            <option value="11">
+                                Class 11
+                            </option>
+
+                            <option value="12">
+                                Class 12
+                            </option>
 
                         </select>
 
@@ -147,14 +619,15 @@ function AdminResult() {
 
                     <div className="form-group">
 
-                        <label>Roll Number</label>
+                        <label>
+                            Roll Number
+                        </label>
 
                         <input
                             type="number"
                             name="roll"
                             value={student.roll}
                             onChange={handleStudentChange}
-                            placeholder="Enter roll number"
                             required
                         />
 
@@ -163,14 +636,15 @@ function AdminResult() {
 
                     <div className="form-group">
 
-                        <label>Registration Number</label>
+                        <label>
+                            Registration Number
+                        </label>
 
                         <input
                             type="text"
                             name="registration"
                             value={student.registration}
                             onChange={handleStudentChange}
-                            placeholder="Enter registration number"
                             required
                         />
 
@@ -179,123 +653,119 @@ function AdminResult() {
 
                     <div className="form-group">
 
-                        <label>Exam Year</label>
+                        <label>
+                            Exam Year
+                        </label>
 
-                        <select
+                        <input
+                            type="number"
                             name="examYear"
                             value={student.examYear}
                             onChange={handleStudentChange}
                             required
-                        >
-
-                            <option value="">
-                                Select Exam Year
-                            </option>
-
-                            <option value="2026">2026</option>
-                            <option value="2027">2027</option>
-                            <option value="2028">2028</option>
-                            <option value="2029">2029</option>
-
-                        </select>
+                        />
 
                     </div>
 
                 </div>
 
 
-                {/* Subjects */}
-
                 <div className="subjects-section">
 
-                    <h2>Subjects & Marks</h2>
+                    <h2>
+                        Subjects & Marks
+                    </h2>
 
-                    {subjects.map((item, index) => (
 
-                        <div
-                            className="subject-row"
-                            key={index}
-                        >
+                    {subjects.map(
+                        (item, index) => (
 
-                            <div>
+                            <div
+                                className="subject-row"
+                                key={index}
+                            >
 
-                                <label>
-                                    Subject
-                                </label>
+                                <div>
 
-                                <select
-                                    value={item.subject}
-                                    onChange={(e) =>
-                                        handleSubjectChange(
-                                            index,
-                                            "subject",
-                                            e.target.value
-                                        )
-                                    }
-                                    required
-                                >
+                                    <label>
+                                        Subject
+                                    </label>
 
-                                    <option value="">
-                                        Select Subject
-                                    </option>
+                                    <select
+                                        value={item.subject}
+                                        onChange={(e) =>
+                                            handleSubjectChange(
+                                                index,
+                                                "subject",
+                                                e.target.value
+                                            )
+                                        }
+                                        required
+                                    >
 
-                                    {subjectList.map((subject) => (
-
-                                        <option
-                                            key={subject}
-                                            value={subject}
-                                        >
-                                            {subject}
+                                        <option value="">
+                                            Select Subject
                                         </option>
 
-                                    ))}
+                                        {subjectList.map(
+                                            (subject) => (
 
-                                </select>
+                                                <option
+                                                    key={subject}
+                                                    value={subject}
+                                                >
+                                                    {subject}
+                                                </option>
+
+                                            )
+                                        )}
+
+                                    </select>
+
+                                </div>
+
+
+                                <div>
+
+                                    <label>
+                                        Marks
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        max="100"
+                                        value={item.marks}
+                                        onChange={(e) =>
+                                            handleSubjectChange(
+                                                index,
+                                                "marks",
+                                                e.target.value
+                                            )
+                                        }
+                                        required
+                                    />
+
+                                </div>
+
+
+                                {subjects.length > 1 && (
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            removeSubject(index)
+                                        }
+                                    >
+                                        Remove
+                                    </button>
+
+                                )}
 
                             </div>
 
-
-                            <div>
-
-                                <label>
-                                    Marks
-                                </label>
-
-                                <input
-                                    type="number"
-                                    min="0"
-                                    max="100"
-                                    value={item.marks}
-                                    onChange={(e) =>
-                                        handleSubjectChange(
-                                            index,
-                                            "marks",
-                                            e.target.value
-                                        )
-                                    }
-                                    placeholder="Marks"
-                                    required
-                                />
-
-                            </div>
-
-
-                            {subjects.length > 1 && (
-
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        removeSubject(index)
-                                    }
-                                >
-                                    Remove
-                                </button>
-
-                            )}
-
-                        </div>
-
-                    ))}
+                        )
+                    )}
 
 
                     <button
@@ -308,12 +778,18 @@ function AdminResult() {
                 </div>
 
 
-                {/* Submit */}
-
                 <div className="submit-section">
 
-                    <button type="submit">
-                        Save Student Result
+                    <button
+                        type="submit"
+                        disabled={loading}
+                    >
+
+                        {loading
+                            ? "Saving..."
+                            : "Submit Result"
+                        }
+
                     </button>
 
                 </div>
@@ -321,7 +797,9 @@ function AdminResult() {
             </form>
 
         </div>
+
     );
+
 }
 
 export default AdminResult;
