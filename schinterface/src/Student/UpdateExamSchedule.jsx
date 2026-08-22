@@ -76,44 +76,37 @@ const handleSubmit = async (e) => {
     setMessage("");
 
     try {
-        const response = await fetch(
-          
-
-             `${import.meta.env.VITE_API_URL}/api/exam/update`,
+        const response = await axios.put(
+            `${import.meta.env.VITE_API_URL}/api/exam/update`,
             {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    class: Number(form.class),
-                    examName: form.examName,
-                    exams: form.exams.map((exam) => ({
-                        subject: exam.subject,
-                        examDate: exam.examDate,
-                        time: exam.time,
-                        duration: Number(exam.duration),
-                    })),
-                }),
+                class: Number(form.class),
+
+                examName: form.examName,
+
+                exams: form.exams.map((exam) => ({
+                    subject: exam.subject,
+                    examDate: exam.examDate,
+                    time: exam.time,
+                    duration: Number(exam.duration),
+                })),
             }
         );
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message);
-        }
+        console.log(response.data);
 
         setMessage("Exam routine updated successfully.");
 
     } catch (error) {
         console.error(error);
-        setMessage(error.message || "Failed to update exam routine");
+
+        setMessage(
+            error.response?.data?.message ||
+            "Failed to update exam routine"
+        );
+    } finally {
+        setLoading(false);
     }
-
-    setLoading(false);
 };
-
     return (
         <div
             style={{
