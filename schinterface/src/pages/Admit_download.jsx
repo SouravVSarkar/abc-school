@@ -34,48 +34,45 @@ function DownloadExam() {
             const container = document.createElement("div");
 
 
-            // Set PDF container properties
-            container.style.width = "190mm";
-            container.style.minHeight = "277mm";
-            container.style.padding = "15mm";
+            // A4 size in pixels
+            container.style.width = "794px";
+            container.style.minHeight = "1123px";
+
+            container.style.padding = "60px";
             container.style.boxSizing = "border-box";
 
-            container.style.backgroundColor = "#ffffff";
-            container.style.color = "#000000";
+            container.style.background = "white";
+            container.style.color = "black";
 
             container.style.fontFamily = "Arial, sans-serif";
-            container.style.opacity = "1";
-            container.style.filter = "none";
 
 
             container.innerHTML = `
 
                 <div style="
                     width: 100%;
-                    background-color: #ffffff;
-                    color: #000000;
-                    opacity: 1;
-                    filter: none;
+                    background: white;
+                    color: black;
                     font-family: Arial, sans-serif;
                 ">
 
 
-                    <!-- Academy Name -->
+                    <!-- School Name -->
 
                     <h1 style="
                         text-align: center;
-                        margin: 0 0 5px 0;
+
+                        margin: 0;
+                        margin-bottom: 5px;
+
                         padding: 0;
 
                         font-family: Arial, sans-serif;
-                        font-size: 28px;
-                        font-weight: 700;
 
-                        color: #000000 !important;
-                        opacity: 1 !important;
-                        filter: none !important;
+                        font-size: 30px;
+                        font-weight: bold;
 
-                        -webkit-text-fill-color: #000000 !important;
+                        color: black;
                     ">
                         Little Stars Academy
                     </h1>
@@ -85,18 +82,18 @@ function DownloadExam() {
 
                     <h2 style="
                         text-align: center;
-                        margin: 0 0 5px 0;
+
+                        margin: 0;
+                        margin-bottom: 5px;
+
                         padding: 0;
 
                         font-family: Arial, sans-serif;
-                        font-size: 20px;
-                        font-weight: 700;
 
-                        color: #000000 !important;
-                        opacity: 1 !important;
-                        filter: none !important;
+                        font-size: 21px;
+                        font-weight: bold;
 
-                        -webkit-text-fill-color: #000000 !important;
+                        color: black;
                     ">
                         ${exam.examName}
                     </h2>
@@ -106,18 +103,18 @@ function DownloadExam() {
 
                     <h3 style="
                         text-align: center;
-                        margin: 0 0 30px 0;
+
+                        margin: 0;
+                        margin-bottom: 35px;
+
                         padding: 0;
 
                         font-family: Arial, sans-serif;
+
                         font-size: 18px;
-                        font-weight: 700;
+                        font-weight: bold;
 
-                        color: #000000 !important;
-                        opacity: 1 !important;
-                        filter: none !important;
-
-                        -webkit-text-fill-color: #000000 !important;
+                        color: black;
                     ">
                         Class ${exam.class}
                     </h3>
@@ -127,16 +124,16 @@ function DownloadExam() {
 
                     <table style="
                         width: 100%;
+
                         border-collapse: collapse;
-                        table-layout: fixed;
 
                         text-align: center;
 
                         font-family: Arial, sans-serif;
-                        font-size: 14px;
 
-                        color: #000000 !important;
-                        background-color: #ffffff;
+                        color: black;
+
+                        background: white;
                     ">
 
 
@@ -145,92 +142,61 @@ function DownloadExam() {
                             <tr>
 
 
-                                <!-- Subject -->
-
                                 <th style="
-                                    width: 25%;
+                                    border: 1px solid black;
+                                    padding: 12px;
 
-                                    border: 1px solid #000000;
-                                    padding: 10px;
+                                    font-size: 15px;
+                                    font-weight: bold;
 
-                                    font-family: Arial, sans-serif;
-                                    font-size: 14px;
-                                    font-weight: 700;
-
-                                    color: #000000 !important;
-                                    background-color: #ffffff;
-
-                                    opacity: 1 !important;
-                                    -webkit-text-fill-color: #000000 !important;
+                                    color: black;
+                                    background: white;
                                 ">
                                     Subject
                                 </th>
 
 
-                                <!-- Date -->
-
                                 <th style="
-                                    width: 25%;
+                                    border: 1px solid black;
+                                    padding: 12px;
 
-                                    border: 1px solid #000000;
-                                    padding: 10px;
+                                    font-size: 15px;
+                                    font-weight: bold;
 
-                                    font-family: Arial, sans-serif;
-                                    font-size: 14px;
-                                    font-weight: 700;
-
-                                    color: #000000 !important;
-                                    background-color: #ffffff;
-
-                                    opacity: 1 !important;
-                                    -webkit-text-fill-color: #000000 !important;
+                                    color: black;
+                                    background: white;
                                 ">
                                     Date
                                 </th>
 
 
-                                <!-- Time -->
-
                                 <th style="
-                                    width: 25%;
+                                    border: 1px solid black;
+                                    padding: 12px;
 
-                                    border: 1px solid #000000;
-                                    padding: 10px;
+                                    font-size: 15px;
+                                    font-weight: bold;
 
-                                    font-family: Arial, sans-serif;
-                                    font-size: 14px;
-                                    font-weight: 700;
-
-                                    color: #000000 !important;
-                                    background-color: #ffffff;
-
-                                    opacity: 1 !important;
-                                    -webkit-text-fill-color: #000000 !important;
+                                    color: black;
+                                    background: white;
                                 ">
                                     Time
                                 </th>
 
 
-                                <!-- Duration -->
-
                                 <th style="
-                                    width: 25%;
+                                    border: 1px solid black;
+                                    padding: 12px;
 
-                                    border: 1px solid #000000;
-                                    padding: 10px;
+                                    font-size: 15px;
+                                    font-weight: bold;
 
-                                    font-family: Arial, sans-serif;
-                                    font-size: 14px;
-                                    font-weight: 700;
-
-                                    color: #000000 !important;
-                                    background-color: #ffffff;
-
-                                    opacity: 1 !important;
-                                    -webkit-text-fill-color: #000000 !important;
+                                    color: black;
+                                    background: white;
                                 ">
                                     Duration
                                 </th>
+
 
                             </tr>
 
@@ -242,7 +208,7 @@ function DownloadExam() {
 
                             ${exam.exams.map(item => {
 
-                                // Convert date into Indian format
+                                // Getting exam date
                                 const date = new Date(
                                     item.examDate
                                 ).toLocaleDateString("en-IN");
@@ -253,77 +219,53 @@ function DownloadExam() {
                                     <tr>
 
 
-                                        <!-- Subject -->
-
                                         <td style="
-                                            border: 1px solid #000000;
-                                            padding: 10px;
+                                            border: 1px solid black;
+                                            padding: 12px;
 
-                                            font-family: Arial, sans-serif;
                                             font-size: 14px;
 
-                                            color: #000000 !important;
-                                            background-color: #ffffff;
-
-                                            opacity: 1 !important;
-                                            -webkit-text-fill-color: #000000 !important;
+                                            color: black;
+                                            background: white;
                                         ">
                                             ${item.subject}
                                         </td>
 
 
-                                        <!-- Date -->
-
                                         <td style="
-                                            border: 1px solid #000000;
-                                            padding: 10px;
+                                            border: 1px solid black;
+                                            padding: 12px;
 
-                                            font-family: Arial, sans-serif;
                                             font-size: 14px;
 
-                                            color: #000000 !important;
-                                            background-color: #ffffff;
-
-                                            opacity: 1 !important;
-                                            -webkit-text-fill-color: #000000 !important;
+                                            color: black;
+                                            background: white;
                                         ">
                                             ${date}
                                         </td>
 
 
-                                        <!-- Time -->
-
                                         <td style="
-                                            border: 1px solid #000000;
-                                            padding: 10px;
+                                            border: 1px solid black;
+                                            padding: 12px;
 
-                                            font-family: Arial, sans-serif;
                                             font-size: 14px;
 
-                                            color: #000000 !important;
-                                            background-color: #ffffff;
-
-                                            opacity: 1 !important;
-                                            -webkit-text-fill-color: #000000 !important;
+                                            color: black;
+                                            background: white;
                                         ">
                                             ${item.time}
                                         </td>
 
 
-                                        <!-- Duration -->
-
                                         <td style="
-                                            border: 1px solid #000000;
-                                            padding: 10px;
+                                            border: 1px solid black;
+                                            padding: 12px;
 
-                                            font-family: Arial, sans-serif;
                                             font-size: 14px;
 
-                                            color: #000000 !important;
-                                            background-color: #ffffff;
-
-                                            opacity: 1 !important;
-                                            -webkit-text-fill-color: #000000 !important;
+                                            color: black;
+                                            background: white;
                                         ">
                                             ${item.duration} minutes
                                         </td>
@@ -341,22 +283,18 @@ function DownloadExam() {
                     </table>
 
 
-                    <!-- Notice -->
+                    <!-- Bottom Message -->
 
                     <p style="
-                        margin: 35px 0 0 0;
-                        padding: 0;
+                        margin-top: 45px;
 
                         text-align: center;
 
                         font-family: Arial, sans-serif;
-                        font-size: 14px;
 
-                        color: #000000 !important;
-                        opacity: 1 !important;
-                        filter: none !important;
+                        font-size: 15px;
 
-                        -webkit-text-fill-color: #000000 !important;
+                        color: black;
                     ">
                         Please report to school before the examination time.
                     </p>
@@ -367,19 +305,32 @@ function DownloadExam() {
             `;
 
 
-            // Add container temporarily to the page
-            container.style.position = "absolute";
-            container.style.left = "-9999px";
+            /*
+             * Add container to the page.
+             *
+             * We are NOT moving it to -9999px because
+             * html2canvas can sometimes capture a blank PDF
+             * when the element is outside the viewport.
+             */
+
+            container.style.position = "fixed";
+            container.style.left = "0";
             container.style.top = "0";
+
+            container.style.zIndex = "-1";
+
 
             document.body.appendChild(container);
 
 
-            // Convert HTML into PDF
+            /*
+             * Convert HTML into PDF
+             */
+
             await html2pdf()
                 .set({
 
-                    // No extra margin because we already added padding
+                    // PDF margin
                     margin: 0,
 
                     // PDF file name
@@ -391,28 +342,28 @@ function DownloadExam() {
                         quality: 1
                     },
 
-                    // HTML to canvas settings
+                    // HTML canvas settings
                     html2canvas: {
+
                         scale: 2,
+
                         useCORS: true,
+
                         backgroundColor: "#ffffff",
+
                         logging: false
+
                     },
 
                     // PDF settings
                     jsPDF: {
-                        unit: "mm",
-                        format: "a4",
-                        orientation: "portrait"
-                    },
 
-                    // Prevent table rows from breaking
-                    pagebreak: {
-                        mode: [
-                            "avoid-all",
-                            "css",
-                            "legacy"
-                        ]
+                        unit: "mm",
+
+                        format: "a4",
+
+                        orientation: "portrait"
+
                     }
 
                 })
@@ -420,11 +371,14 @@ function DownloadExam() {
                 .save();
 
 
-            // Remove container after PDF is generated
+            /*
+             * Remove HTML container
+             * after PDF is generated
+             */
+
             document.body.removeChild(container);
 
 
-            // Show success message
             setMessage(
                 "Exam routine downloaded successfully."
             );
@@ -464,7 +418,7 @@ function DownloadExam() {
             </h2>
 
 
-            {/* Select class */}
+            {/* Select Class */}
 
             <select
                 value={className}
@@ -499,7 +453,7 @@ function DownloadExam() {
             <br />
 
 
-            {/* Download button */}
+            {/* Download Button */}
 
             <button
                 onClick={handleDownload}
@@ -517,7 +471,7 @@ function DownloadExam() {
             <br />
 
 
-            {/* Show message */}
+            {/* Show Message */}
 
             {message && (
                 <p>
