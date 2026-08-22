@@ -1,6 +1,41 @@
 import Exam from "../models/exam.model.js";
 
 
+export const downloadExam = async (req, res) => {
+    try {
+        const classNumber = Number(req.params.class);
+
+        if (!classNumber) {
+            return res.status(400).json({
+                message: "Class is required"
+            });
+        }
+
+        const exam = await Exam.findOne({
+            class: classNumber
+        });
+
+        if (!exam) {
+            return res.status(404).json({
+                message: "No exam schedule found for this class"
+            });
+        }
+
+        res.status(200).json({
+            message: "Exam schedule found",
+            exam
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            message: "Server error",
+            error: error.message
+        });
+    }
+};
+
 export const updateExam = async (req, res) => {
     try {
         const {

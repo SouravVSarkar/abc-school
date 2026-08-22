@@ -2,6 +2,9 @@ import React from "react";
 import "../styles/Home.css";
 import { Link } from "react-router-dom";
 import Register from "../Student/RegisterStudent";
+import { useNavigate } from "react-router-dom";
+
+const navigate = useNavigate();
 function App() {
   return (
     <div>
@@ -34,6 +37,10 @@ function App() {
         <Link to="/Register">
   Apply Now
 </Link>
+
+<button onClick={() => navigate("/download-exam")}>
+    Download Admit For Exam
+</button>
       </section>
 
       {/* Features */}
