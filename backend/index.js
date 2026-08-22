@@ -4,6 +4,7 @@ import { connectDb } from "./config/db.js"
 import cookieParser from "cookie-parser"
 import authRouter from "./routes/auth.router.js"
 import studentResultRouter from "./routes/studentResult.router.js"
+
 import examRoutes from "./routes/exam.router.js"
 import cors from "cors"
 
