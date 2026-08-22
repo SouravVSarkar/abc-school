@@ -1,5 +1,5 @@
-import Student from "../models/user.model"
-export const  viewStudent = async ("viewstudent",req,res) => {
+import Student from "../models/user.model.js"
+export const  viewStudent = async (req, res) => {
 try{
 
     const {studentClass,StudentRoll,Registration}=req.body;

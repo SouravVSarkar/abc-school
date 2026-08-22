@@ -1,140 +1,289 @@
 import { useState } from "react";
 
 function CreateExam() {
-  const [form, setForm] = useState({
-    class: "",
-    examName: "",
-    exams: [
-      {
-        subject: "",
-        examDate: "",
-        time: "",
-        duration: "",
-      },
-    ],
-  });
-
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
+    const [form, setForm] = useState({
+        class: "",
+        examName: "",
+        exams: [
+            {
+                subject: "",
+                examDate: "",
+                time: "",
+                duration: "",
+            },
+        ],
     });
-  };
 
-  const handleExamChange = (index, e) => {
-    const updated = [...form.exams];
-    updated[index][e.target.name] = e.target.value;
+    const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    setForm({
-      ...form,
-      exams: updated,
-    });
-  };
+    // Handle class and exam name
+    const handleChange = (e) => {
+        setForm({
+            ...form,
+            [e.target.name]: e.target.value,
+        });
+    };
 
-  const addSubject = () => {
-    setForm({
-      ...form,
-      exams: [
-        ...form.exams,
-        {
-          subject: "",
-          examDate: "",
-          time: "",
-          duration: "",
-        },
-      ],
-    });
-  };
+    // Handle subject details
+    const handleExamChange = (index, e) => {
+        const updated = [...form.exams];
 
-  const handleSubmit = async (e) => {
+        updated[index] = {
+            ...updated[index],
+            [e.target.name]: e.target.value,
+        };
+
+        setForm({
+            ...form,
+            exams: updated,
+        });
+    };
+
+    // Add another subject
+    const addSubject = () => {
+        setForm({
+            ...form,
+            exams: [
+                ...form.exams,
+                {
+                    subject: "",
+                    examDate: "",
+                    time: "",
+                    duration: "",
+                },
+            ],
+        });
+    };
+
+    // Remove subject
+    const removeSubject = (index) => {
+        const updated = form.exams.filter(
+            (_, i) => i !== index
+        );
+
+        setForm({
+            ...form,
+            exams: updated,
+        });
+    };
+
+    // Update exam routine
+const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(form);
+    setLoading(true);
+    setMessage("");
 
-    // await fetch(...)
-  };
+    try {
+        const response = await fetch(
+            "https://share-file-web.onrender.com/api/exam/update",
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    class: Number(form.class),
+                    examName: form.examName,
+                    exams: form.exams.map((exam) => ({
+                        subject: exam.subject,
+                        examDate: exam.examDate,
+                        time: exam.time,
+                        duration: Number(exam.duration),
+                    })),
+                }),
+            }
+        );
 
-  return (
-    <div style={{ width: "600px", margin: "30px auto" }}>
-      <h2>Create Exam Routine</h2>
+        const data = await response.json();
 
-      <form onSubmit={handleSubmit}>
+        if (!response.ok) {
+            throw new Error(data.message);
+        }
 
-        <input
-          name="class"
-          placeholder="Class"
-          value={form.class}
-          onChange={handleChange}
-        />
+        setMessage("Exam routine updated successfully.");
 
-        <br /><br />
+    } catch (error) {
+        console.error(error);
+        setMessage(error.message || "Failed to update exam routine");
+    }
 
-        <input
-          name="examName"
-          placeholder="Exam Name"
-          value={form.examName}
-          onChange={handleChange}
-        />
+    setLoading(false);
+};
 
-        <hr />
+    return (
+        <div
+            style={{
+                width: "600px",
+                margin: "30px auto",
+            }}
+        >
+            <h2>Update Exam Routine</h2>
 
-        {form.exams.map((exam, index) => (
-          <div key={index}>
+            <form onSubmit={handleSubmit}>
 
-            <h4>Subject {index + 1}</h4>
+                {/* Class */}
+                <label>Class</label>
 
-            <input
-              name="subject"
-              placeholder="Subject"
-              value={exam.subject}
-              onChange={(e) => handleExamChange(index, e)}
-            />
+                <br />
 
-            <br /><br />
+                <select
+                    name="class"
+                    value={form.class}
+                    onChange={handleChange}
+                    required
+                >
+                    <option value="">
+                        Select Class
+                    </option>
 
-            <input
-              type="date"
-              name="examDate"
-              value={exam.examDate}
-              onChange={(e) => handleExamChange(index, e)}
-            />
+                    {Array.from(
+                        { length: 12 },
+                        (_, index) => index + 1
+                    ).map((classNumber) => (
+                        <option
+                            key={classNumber}
+                            value={classNumber}
+                        >
+                            Class {classNumber}
+                        </option>
+                    ))}
+                </select>
 
-            <br /><br />
+                <br />
+                <br />
 
-            <input
-              type="time"
-              name="time"
-              value={exam.time}
-              onChange={(e) => handleExamChange(index, e)}
-            />
+                {/* Exam Name */}
+                <label>Exam Name</label>
 
-            <br /><br />
+                <br />
 
-            <input
-              type="number"
-              name="duration"
-              placeholder="Duration (Minutes)"
-              value={exam.duration}
-              onChange={(e) => handleExamChange(index, e)}
-            />
+                <input
+                    name="examName"
+                    placeholder="Exam Name"
+                    value={form.examName}
+                    onChange={handleChange}
+                    required
+                />
 
-            <hr />
-          </div>
-        ))}
+                <hr />
 
-        <button type="button" onClick={addSubject}>
-          Add Subject
-        </button>
+                {/* Subjects */}
+                {form.exams.map((exam, index) => (
+                    <div key={index}>
 
-        <br /><br />
+                        <h4>
+                            Subject {index + 1}
+                        </h4>
 
-        <button type="submit">
-          Save Exam
-        </button>
+                        {/* Subject */}
+                        <input
+                            name="subject"
+                            placeholder="Subject"
+                            value={exam.subject}
+                            onChange={(e) =>
+                                handleExamChange(index, e)
+                            }
+                            required
+                        />
 
-      </form>
-    </div>
-  );
+                        <br />
+                        <br />
+
+                        {/* Exam Date */}
+                        <input
+                            type="date"
+                            name="examDate"
+                            value={exam.examDate}
+                            onChange={(e) =>
+                                handleExamChange(index, e)
+                            }
+                            required
+                        />
+
+                        <br />
+                        <br />
+
+                        {/* Exam Time */}
+                        <input
+                            type="time"
+                            name="time"
+                            value={exam.time}
+                            onChange={(e) =>
+                                handleExamChange(index, e)
+                            }
+                            required
+                        />
+
+                        <br />
+                        <br />
+
+                        {/* Duration */}
+                        <input
+                            type="number"
+                            name="duration"
+                            placeholder="Duration (Minutes)"
+                            value={exam.duration}
+                            onChange={(e) =>
+                                handleExamChange(index, e)
+                            }
+                            required
+                        />
+
+                        <br />
+                        <br />
+
+                        {/* Remove */}
+                        {form.exams.length > 1 && (
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    removeSubject(index)
+                                }
+                            >
+                                Remove Subject
+                            </button>
+                        )}
+
+                        <hr />
+
+                    </div>
+                ))}
+
+                {/* Add Subject */}
+                <button
+                    type="button"
+                    onClick={addSubject}
+                >
+                    Add Subject
+                </button>
+
+                <br />
+                <br />
+
+                {/* Update */}
+                <button
+                    type="submit"
+                    disabled={loading}
+                >
+                    {loading
+                        ? "Updating..."
+                        : "Update Exam"}
+                </button>
+
+            </form>
+
+            <br />
+
+            {message && (
+                <p>
+                    {message}
+                </p>
+            )}
+
+        </div>
+    );
 }
 
 export default CreateExam;
