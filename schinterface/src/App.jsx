@@ -19,7 +19,7 @@ function App() {
         <Route path="/view-profile" element={<StudentSearch />} />
         <Route path="/create-exam" element={<CreateExam />} />
         <Route path="/student-result" element={<AdminResult />} />
-         <Route path="/admit-download" element={<DownloadExam />} />
+        <Route path="/download-admit" element={<DownloadExam />} />
 
 
       </Routes>

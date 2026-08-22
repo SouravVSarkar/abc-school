@@ -68,7 +68,7 @@ function App() {
 
         {/* Download Exam Admit */}
         <button
-          onClick={() => navigate("/download-exam")}
+          onClick={() => navigate("/download-admit")}
         >
           Download Admit For Exam
         </button>
