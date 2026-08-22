@@ -22,7 +22,7 @@ function DownloadExam() {
 
             // Get JSON from backend
             const response = await axios.get(
-                `${import.meta.env.VITE_API_URL}/api/exam/schedule/${className}`
+                `${import.meta.env.VITE_API_URL}/api/exam/download/${className}`
             );
 
             const exam = response.data.exam;
