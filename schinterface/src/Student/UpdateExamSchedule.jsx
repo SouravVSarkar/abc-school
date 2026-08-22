@@ -77,7 +77,9 @@ const handleSubmit = async (e) => {
 
     try {
         const response = await fetch(
-            "https://share-file-web.onrender.com/api/exam/update",
+          
+
+             `${import.meta.env.VITE_API_URL}/api/exam/update`,
             {
                 method: "PUT",
                 headers: {
