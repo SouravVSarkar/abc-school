@@ -1,6 +1,4 @@
 import Exam from "../models/exam.model.js";
-import axios from "axios";
-
 
 // CREATE EXAM SCHEDULE
 export const createExam = async (req, res) => {
