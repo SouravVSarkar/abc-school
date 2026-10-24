@@ -12,11 +12,13 @@ function StudentSearch() {
       return;
     }
     try {
-      const response = await fetch("http://localhost:3000/api/auth/viewstudent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+          const response = await fetch(
+        "https://abc-school-hopd.onrender.com/api/auth/viewstudent",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
         body: JSON.stringify({
           class: studentClass,
           StudentRoll:StudentRoll,
