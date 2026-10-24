@@ -16,9 +16,9 @@ const app=express()
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin: true,
+    origin: "https://abc-school-frontend.onrender.com",
     credentials: true
-}))
+}));
 app.use(express.json());
 app.use("/api/auth",authRouter)
 app.use("/api/student-result",studentResultRouter);
