@@ -1,4 +1,4 @@
-```jsx
+
 import { useState } from "react";
 import axios from "axios";
 import html2pdf from "html2pdf.js";
@@ -443,4 +443,3 @@ function DownloadExam() {
 // App.jsx imports this component as a default import.
 
 export default DownloadExam;
-```
