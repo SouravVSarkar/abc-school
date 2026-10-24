@@ -10,172 +10,152 @@ const handleDownload = async () => {
 
     try {
 
-        // Get JSON from backend
         const response = await axios.get(
             `${import.meta.env.VITE_API_URL}/api/exam/download/${className}`
         );
 
         const exam = response.data.exam;
 
+        console.log("Exam data:", exam);
 
-        // Create HTML
         const container = document.createElement("div");
 
         container.innerHTML = `
-
             <div style="
                 width: 794px;
                 min-height: 1123px;
                 padding: 60px;
                 box-sizing: border-box;
-
-                background-color: white;
+                background: white;
                 color: black;
-
                 font-family: Arial, sans-serif;
             ">
-
 
                 <h1 style="
                     text-align: center;
                     margin: 0 0 5px 0;
-
                     font-size: 30px;
                     font-weight: bold;
-
-                    color: #000000;
+                    color: black;
                 ">
                     Little Stars Academy
                 </h1>
 
-
                 <h2 style="
                     text-align: center;
                     margin: 0 0 5px 0;
-
                     font-size: 21px;
                     font-weight: bold;
-
-                    color: #000000;
+                    color: black;
                 ">
                     ${exam.examName}
                 </h2>
 
-
                 <h3 style="
                     text-align: center;
                     margin: 0 0 35px 0;
-
                     font-size: 18px;
                     font-weight: bold;
-
-                    color: #000000;
+                    color: black;
                 ">
                     Class ${exam.class}
                 </h3>
 
-
                 <table style="
                     width: 100%;
                     border-collapse: collapse;
-
                     text-align: center;
-
                     font-size: 14px;
-                    color: #000000;
+                    color: black;
                 ">
 
                     <thead>
-
                         <tr>
-
                             <th style="
-                                border: 1px solid #000000;
+                                border: 1px solid black;
                                 padding: 12px;
-                                color: #000000;
-                                background-color: #ffffff;
+                                color: black;
+                                background: white;
                             ">
                                 Subject
                             </th>
 
                             <th style="
-                                border: 1px solid #000000;
+                                border: 1px solid black;
                                 padding: 12px;
-                                color: #000000;
-                                background-color: #ffffff;
+                                color: black;
+                                background: white;
                             ">
                                 Date
                             </th>
 
                             <th style="
-                                border: 1px solid #000000;
+                                border: 1px solid black;
                                 padding: 12px;
-                                color: #000000;
-                                background-color: #ffffff;
+                                color: black;
+                                background: white;
                             ">
                                 Time
                             </th>
 
                             <th style="
-                                border: 1px solid #000000;
+                                border: 1px solid black;
                                 padding: 12px;
-                                color: #000000;
-                                background-color: #ffffff;
+                                color: black;
+                                background: white;
                             ">
                                 Duration
                             </th>
-
                         </tr>
-
                     </thead>
-
 
                     <tbody>
 
                         ${exam.exams.map(item => {
 
-                            const date = new Date(
-                                item.examDate
-                            ).toLocaleDateString("en-IN");
+                            const date = new Date(item.examDate)
+                                .toLocaleDateString("en-IN", {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                    year: "numeric"
+                                });
 
                             return `
-
                                 <tr>
 
                                     <td style="
-                                        border: 1px solid #000000;
+                                        border: 1px solid black;
                                         padding: 12px;
-                                        color: #000000;
+                                        color: black;
                                     ">
                                         ${item.subject}
                                     </td>
 
                                     <td style="
-                                        border: 1px solid #000000;
+                                        border: 1px solid black;
                                         padding: 12px;
-                                        color: #000000;
+                                        color: black;
                                     ">
                                         ${date}
                                     </td>
 
                                     <td style="
-                                        border: 1px solid #000000;
+                                        border: 1px solid black;
                                         padding: 12px;
-                                        color: #000000;
+                                        color: black;
                                     ">
                                         ${item.time}
                                     </td>
 
                                     <td style="
-                                        border: 1px solid #000000;
+                                        border: 1px solid black;
                                         padding: 12px;
-                                        color: #000000;
+                                        color: black;
                                     ">
                                         ${item.duration} minutes
                                     </td>
 
                                 </tr>
-
                             `;
 
                         }).join("")}
@@ -184,23 +164,30 @@ const handleDownload = async () => {
 
                 </table>
 
-
                 <p style="
                     margin-top: 45px;
-
                     text-align: center;
-
                     font-size: 15px;
-
-                    color: #000000;
+                    color: black;
                 ">
                     Please report to school before the examination time.
                 </p>
 
-
             </div>
-
         `;
+
+
+        // IMPORTANT:
+        // Add the HTML to the actual DOM
+        container.style.position = "absolute";
+        container.style.left = "-9999px";
+        container.style.top = "0";
+
+        document.body.appendChild(container);
+
+
+        // Give browser time to render the HTML
+        await new Promise(resolve => setTimeout(resolve, 100));
 
 
         // Convert HTML to PDF
@@ -219,11 +206,7 @@ const handleDownload = async () => {
                 html2canvas: {
                     scale: 2,
                     backgroundColor: "#ffffff",
-
-                    // Important
                     useCORS: true,
-
-                    // Don't log html2canvas messages
                     logging: false
                 },
 
@@ -238,9 +221,11 @@ const handleDownload = async () => {
             .save();
 
 
-        setMessage(
-            "Exam routine downloaded successfully."
-        );
+        // Remove temporary HTML
+        document.body.removeChild(container);
+
+
+        setMessage("Exam routine downloaded successfully.");
 
 
     } catch (error) {
