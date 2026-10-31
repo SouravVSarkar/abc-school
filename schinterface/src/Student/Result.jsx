@@ -52,14 +52,12 @@ function AdminResult() {
         const percentage =
             (Number(marks) / Number(outOf)) * 100;
 
-        if (percentage >= ) return "O+";
-        if (percentage >= 80) return "O";
-        if (percentage >= 70) return "A+";
-        if (percentage >= 60) return "A";
-        if (percentage >= 50) return "B+";
-        if (percentage >= 40) return "B";
-        if (percentage >= 30) return "C+";
-        if (percentage >= 20) return "C";
+ 
+        if (percentage >= 75) return "A";
+     
+        if (percentage >= 50) return "B";
+         
+        if (percentage >= 25) return "C";
 
         return "D";
     };
