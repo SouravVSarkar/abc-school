@@ -3,9 +3,10 @@ import mongoose from "mongoose";
 
 const subjectSchema = new mongoose.Schema(
     {
-            type: String,
 
-        subject: {            required: true,
+        subject: {
+            type:String,
+            required: true,
             trim: true
         },
 
