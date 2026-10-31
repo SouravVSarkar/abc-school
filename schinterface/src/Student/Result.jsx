@@ -1,3 +1,4 @@
+```jsx
 import React, { useState } from "react";
 import axios from "axios";
 import "./AdminResult.css";
@@ -15,14 +16,13 @@ function AdminResult() {
     const [subjects, setSubjects] = useState([
         {
             subject: "",
-            marks: ""
+            marks: "",
+            outOf: ""
         }
     ]);
 
     const [savedResult, setSavedResult] = useState(null);
-
     const [loading, setLoading] = useState(false);
-
 
     const subjectList = [
         "Bengali",
@@ -38,6 +38,31 @@ function AdminResult() {
         "Economics"
     ];
 
+    // Grade calculation
+    const getGrade = (marks, outOf) => {
+
+        if (
+            marks === "" ||
+            outOf === "" ||
+            Number(outOf) <= 0
+        ) {
+            return "";
+        }
+
+        const percentage =
+            (Number(marks) / Number(outOf)) * 100;
+
+        if (percentage >= ) return "O+";
+        if (percentage >= 80) return "O";
+        if (percentage >= 70) return "A+";
+        if (percentage >= 60) return "A";
+        if (percentage >= 50) return "B+";
+        if (percentage >= 40) return "B";
+        if (percentage >= 30) return "C+";
+        if (percentage >= 20) return "C";
+
+        return "D";
+    };
 
     // Student information
     const handleStudentChange = (e) => {
@@ -48,7 +73,6 @@ function AdminResult() {
         });
 
     };
-
 
     // Subject and marks
     const handleSubjectChange = (index, field, value) => {
@@ -61,7 +85,6 @@ function AdminResult() {
 
     };
 
-
     // Add subject
     const addSubject = () => {
 
@@ -69,12 +92,12 @@ function AdminResult() {
             ...subjects,
             {
                 subject: "",
-                marks: ""
+                marks: "",
+                outOf: ""
             }
         ]);
 
     };
-
 
     // Remove subject
     const removeSubject = (index) => {
@@ -87,7 +110,6 @@ function AdminResult() {
 
     };
 
-
     // Submit result to backend
     const handleSubmit = async (e) => {
 
@@ -95,15 +117,21 @@ function AdminResult() {
 
         setLoading(true);
 
+        const updatedSubjects = subjects.map((item) => ({
+            subject: item.subject,
+            marks: Number(item.marks),
+            outOf: Number(item.outOf),
+            grade: getGrade(item.marks, item.outOf)
+        }));
+
         const formData = {
             name: student.name,
             className: student.className,
             roll: student.roll,
             registration: student.registration,
             examYear: student.examYear,
-            subjects: subjects
+            subjects: updatedSubjects
         };
-
 
         try {
 
@@ -112,15 +140,11 @@ function AdminResult() {
                 formData
             );
 
-
             console.log(response.data);
 
-
-            // Save returned database result
             setSavedResult(
                 response.data.result
             );
-
 
         } catch (error) {
 
@@ -139,7 +163,6 @@ function AdminResult() {
 
     };
 
-
     // Add another result
     const addAnotherResult = () => {
 
@@ -154,14 +177,14 @@ function AdminResult() {
         setSubjects([
             {
                 subject: "",
-                marks: ""
+                marks: "",
+                outOf: ""
             }
         ]);
 
         setSavedResult(null);
 
     };
-
 
     // Download marksheet
     const downloadMarksheet = () => {
@@ -170,7 +193,6 @@ function AdminResult() {
             return;
         }
 
-
         const totalMarks =
             savedResult.subjects.reduce(
                 (total, item) =>
@@ -178,11 +200,28 @@ function AdminResult() {
                 0
             );
 
+        const totalOutOf =
+            savedResult.subjects.reduce(
+                (total, item) =>
+                    total + Number(item.outOf),
+                0
+            );
 
         const percentage =
-            totalMarks /
-            savedResult.subjects.length;
+            totalOutOf > 0
+                ? (totalMarks / totalOutOf) * 100
+                : 0;
 
+        const overallGrade =
+            percentage >= 90 ? "O+" :
+            percentage >= 80 ? "O" :
+            percentage >= 70 ? "A+" :
+            percentage >= 60 ? "A" :
+            percentage >= 50 ? "B+" :
+            percentage >= 40 ? "B" :
+            percentage >= 30 ? "C+" :
+            percentage >= 20 ? "C" :
+            "D";
 
         const marksheetHTML = `
 
@@ -206,127 +245,79 @@ function AdminResult() {
                 }
 
                 .marksheet {
-
                     width: 800px;
-
                     margin: auto;
-
                     background: white;
-
                     padding: 40px;
-
                     border: 2px solid #222;
-
                 }
 
                 .school-name {
-
                     text-align: center;
-
                     font-size: 28px;
-
                     font-weight: bold;
-
                     margin-bottom: 5px;
-
                 }
 
                 .school-address {
-
                     text-align: center;
-
                     margin-bottom: 25px;
-
                 }
 
                 .title {
-
                     text-align: center;
-
                     font-size: 22px;
-
                     font-weight: bold;
-
                     margin-bottom: 25px;
-
                     border-bottom: 2px solid black;
-
                     padding-bottom: 10px;
-
                 }
 
                 .student-info {
-
                     display: grid;
-
                     grid-template-columns: 1fr 1fr;
-
                     gap: 12px;
-
                     margin-bottom: 25px;
-
                 }
 
                 table {
-
                     width: 100%;
-
                     border-collapse: collapse;
-
                 }
 
                 th, td {
-
                     border: 1px solid black;
-
                     padding: 12px;
-
                     text-align: center;
-
                 }
 
                 th {
-
                     background: #eeeeee;
-
                 }
 
                 .summary {
-
                     margin-top: 25px;
-
                     display: flex;
-
                     justify-content: space-between;
-
                     font-weight: bold;
-
+                    gap: 20px;
                 }
 
                 .signature {
-
                     margin-top: 80px;
-
                     display: flex;
-
                     justify-content: space-between;
-
                 }
 
                 @media print {
 
                     body {
-
                         background: white;
-
                         padding: 0;
-
                     }
 
                     .marksheet {
-
                         border: 2px solid black;
-
                     }
 
                 }
@@ -335,24 +326,20 @@ function AdminResult() {
 
         </head>
 
-
         <body>
 
             <div class="marksheet">
 
                 <div class="school-name">
-                    ABC SCHOOL
+                    LITTLE STARS ACADEMY
                 </div>
 
                 <div class="school-address">
-                    School Examination Department
                 </div>
-
 
                 <div class="title">
                     MARKSHEET
                 </div>
-
 
                 <div class="student-info">
 
@@ -383,23 +370,19 @@ function AdminResult() {
 
                 </div>
 
-
                 <table>
 
                     <thead>
 
                         <tr>
-
                             <th>Sl. No.</th>
-
                             <th>Subject</th>
-
-                            <th>Marks</th>
-
+                            <th>Marks Obtained</th>
+                            <th>Out Of</th>
+                            <th>Grade</th>
                         </tr>
 
                     </thead>
-
 
                     <tbody>
 
@@ -420,6 +403,14 @@ function AdminResult() {
                                     ${item.marks}
                                 </td>
 
+                                <td>
+                                    ${item.outOf}
+                                </td>
+
+                                <td>
+                                    ${item.grade}
+                                </td>
+
                             </tr>
 
                         `).join("")}
@@ -428,12 +419,11 @@ function AdminResult() {
 
                 </table>
 
-
                 <div class="summary">
 
                     <div>
                         Total Marks:
-                        ${totalMarks}
+                        ${totalMarks} / ${totalOutOf}
                     </div>
 
                     <div>
@@ -441,8 +431,12 @@ function AdminResult() {
                         ${percentage.toFixed(2)}%
                     </div>
 
-                </div>
+                    <div>
+                        Grade:
+                        ${overallGrade}
+                    </div>
 
+                </div>
 
                 <div class="signature">
 
@@ -464,7 +458,6 @@ function AdminResult() {
 
         `;
 
-
         const blob = new Blob(
             [marksheetHTML],
             {
@@ -472,11 +465,11 @@ function AdminResult() {
             }
         );
 
+        const url =
+            URL.createObjectURL(blob);
 
-        const url = URL.createObjectURL(blob);
-
-
-        const link = document.createElement("a");
+        const link =
+            document.createElement("a");
 
         link.href = url;
 
@@ -485,11 +478,9 @@ function AdminResult() {
 
         link.click();
 
-
         URL.revokeObjectURL(url);
 
     };
-
 
     // After successful submission
     if (savedResult) {
@@ -507,7 +498,6 @@ function AdminResult() {
                     successfully saved.
                 </p>
 
-
                 <div className="result-actions">
 
                     <button
@@ -515,7 +505,6 @@ function AdminResult() {
                     >
                         Download Marksheet
                     </button>
-
 
                     <button
                         onClick={addAnotherResult}
@@ -531,7 +520,6 @@ function AdminResult() {
 
     }
 
-
     return (
 
         <div className="admin-container">
@@ -540,7 +528,6 @@ function AdminResult() {
                 Student Result Entry
             </h1>
 
-
             <form onSubmit={handleSubmit}>
 
                 <div className="student-information">
@@ -548,7 +535,6 @@ function AdminResult() {
                     <h2>
                         Student Information
                     </h2>
-
 
                     <div className="form-group">
 
@@ -565,7 +551,6 @@ function AdminResult() {
                         />
 
                     </div>
-
 
                     <div className="form-group">
 
@@ -616,7 +601,6 @@ function AdminResult() {
 
                     </div>
 
-
                     <div className="form-group">
 
                         <label>
@@ -633,7 +617,6 @@ function AdminResult() {
 
                     </div>
 
-
                     <div className="form-group">
 
                         <label>
@@ -649,7 +632,6 @@ function AdminResult() {
                         />
 
                     </div>
-
 
                     <div className="form-group">
 
@@ -669,13 +651,11 @@ function AdminResult() {
 
                 </div>
 
-
                 <div className="subjects-section">
 
                     <h2>
                         Subjects & Marks
                     </h2>
-
 
                     {subjects.map(
                         (item, index) => (
@@ -724,17 +704,16 @@ function AdminResult() {
 
                                 </div>
 
-
                                 <div>
 
                                     <label>
-                                        Marks
+                                        Marks Obtained
                                     </label>
 
                                     <input
                                         type="number"
                                         min="0"
-                                        max="100"
+                                        max={item.outOf || undefined}
                                         value={item.marks}
                                         onChange={(e) =>
                                             handleSubjectChange(
@@ -748,6 +727,50 @@ function AdminResult() {
 
                                 </div>
 
+                                <div>
+
+                                    <label>
+                                        Out Of
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={item.outOf}
+                                        onChange={(e) => {
+
+                                            const value =
+                                                e.target.value;
+
+                                            handleSubjectChange(
+                                                index,
+                                                "outOf",
+                                                value
+                                            );
+
+                                        }}
+                                        required
+                                    />
+
+                                </div>
+
+                                <div>
+
+                                    <label>
+                                        Grade
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        value={getGrade(
+                                            item.marks,
+                                            item.outOf
+                                        )}
+                                        readOnly
+                                        placeholder="Grade"
+                                    />
+
+                                </div>
 
                                 {subjects.length > 1 && (
 
@@ -767,7 +790,6 @@ function AdminResult() {
                         )
                     )}
 
-
                     <button
                         type="button"
                         onClick={addSubject}
@@ -776,7 +798,6 @@ function AdminResult() {
                     </button>
 
                 </div>
-
 
                 <div className="submit-section">
 
@@ -803,3 +824,4 @@ function AdminResult() {
 }
 
 export default AdminResult;
+```
