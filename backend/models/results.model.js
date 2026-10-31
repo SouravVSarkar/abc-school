@@ -1,4 +1,4 @@
-```javascript
+javascript
 import mongoose from "mongoose";
 
 const subjectSchema = new mongoose.Schema(
@@ -98,4 +98,5 @@ const StudentResult = mongoose.model(
 );
 
 export default StudentResult;
-```
+
+
