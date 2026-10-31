@@ -1,19 +1,43 @@
+```javascript
 import mongoose from "mongoose";
 
- const subjectSchema = new mongoose.Schema(
+const subjectSchema = new mongoose.Schema(
     {
-        subject: {
             type: String,
-            required: true
+
+        subject: {            required: true,
+            trim: true
         },
 
         marks: {
             type: Number,
             required: true,
-            min: 0,
-            max: 100
+            min: 0
+        },
+
+        outOf: {
+            type: Number,
+            required: true,
+            min: 1
+        },
+
+        grade: {
+            type: String,
+            required: true,
+            enum: [
+                "O+",
+                "O",
+                "A+",
+                "A",
+                "B+",
+                "B",
+                "C+",
+                "C",
+                "D"
+            ]
         }
     },
+
     {
         _id: false
     }
@@ -41,7 +65,8 @@ const studentResultSchema = new mongoose.Schema(
         registration: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
+            trim: true
         },
 
         examYear: {
@@ -51,7 +76,13 @@ const studentResultSchema = new mongoose.Schema(
 
         subjects: {
             type: [subjectSchema],
-            required: true
+            required: true,
+            validate: {
+                validator: function (subjects) {
+                    return subjects.length > 0;
+                },
+                message: "At least one subject is required"
+            }
         }
     },
 
@@ -66,4 +97,5 @@ const StudentResult = mongoose.model(
     studentResultSchema
 );
 
-export default StudentResult
+export default StudentResult;
+```
