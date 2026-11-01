@@ -52,8 +52,11 @@ export const addStudentResult = async (req, res) => {
         }
 
 
-        // Calculate grade from marks
-        const updatedSubjects = subjects.map((item) => {
+        // Validate marks and keep only subject, marks and outOf
+        // (grade is calculated on the frontend, not stored)
+        const updatedSubjects = [];
+
+        for (const item of subjects) {
 
             const marks = Number(item.marks);
             const outOf = Number(item.outOf);
@@ -65,35 +68,18 @@ export const addStudentResult = async (req, res) => {
                 marks < 0 ||
                 marks > outOf
             ) {
-                throw new Error(
-                    `Invalid marks for subject: ${item.subject}`
-                );
+                return res.status(400).json({
+                    message: `Invalid marks for subject: ${item.subject}`
+                });
             }
 
-
-            const percentage = (marks / outOf) * 100;
-
-            let grade;
-
-           if (percentage >= 75) {
-    grade = "A";
-} else if (percentage >= 50) {
-    grade = "B";
-} else if (percentage >= 25) {
-    grade = "C";
-} else {
-    grade = "D";
-}
-
-
-            return {
+            updatedSubjects.push({
                 subject: item.subject,
                 marks: marks,
-                outOf: outOf,
-                grade: grade
-            };
+                outOf: outOf
+            });
 
-        });
+        }
 
 
         // Create new result
