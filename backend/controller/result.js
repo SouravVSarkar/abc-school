@@ -75,25 +75,15 @@ export const addStudentResult = async (req, res) => {
 
             let grade;
 
-            if (percentage >= 90) {
-                grade = "O+";
-            } else if (percentage >= 80) {
-                grade = "O";
-            } else if (percentage >= 70) {
-                grade = "A+";
-            } else if (percentage >= 60) {
-                grade = "A";
-            } else if (percentage >= 50) {
-                grade = "B+";
-            } else if (percentage >= 40) {
-                grade = "B";
-            } else if (percentage >= 30) {
-                grade = "C+";
-            } else if (percentage >= 20) {
-                grade = "C";
-            } else {
-                grade = "D";
-            }
+           if (percentage >= 75) {
+    grade = "A";
+} else if (percentage >= 50) {
+    grade = "B";
+} else if (percentage >= 25) {
+    grade = "C";
+} else {
+    grade = "D";
+}
 
 
             return {
