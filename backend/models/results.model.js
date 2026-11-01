@@ -1,11 +1,9 @@
-javascript
 import mongoose from "mongoose";
 
 const subjectSchema = new mongoose.Schema(
     {
-
         subject: {
-            type:String,
+            type: String,
             required: true,
             trim: true
         },
@@ -20,20 +18,8 @@ const subjectSchema = new mongoose.Schema(
             type: Number,
             required: true,
             min: 1
-        },
-
-        grade: {
-            type: String,
-            required: true,
-        enum: [
-    "A",
-    "B",
-    "C",
-    "D"
-]
         }
     },
-
     {
         _id: false
     }
@@ -81,7 +67,6 @@ const studentResultSchema = new mongoose.Schema(
             }
         }
     },
-
     {
         timestamps: true
     }
@@ -94,5 +79,3 @@ const StudentResult = mongoose.model(
 );
 
 export default StudentResult;
-
-
