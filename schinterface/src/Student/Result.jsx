@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import axios from "axios";
 import "./AdminResult.css";
 
@@ -181,26 +183,22 @@ function AdminResult() {
 
     };
 
-    // Download marksheet
+    // Download marksheet as PDF
     const downloadMarksheet = () => {
 
         if (!savedResult) {
             return;
         }
 
-        const totalMarks =
-            savedResult.subjects.reduce(
-                (total, item) =>
-                    total + Number(item.marks),
-                0
-            );
+        const totalMarks = savedResult.subjects.reduce(
+            (total, item) => total + Number(item.marks),
+            0
+        );
 
-        const totalOutOf =
-            savedResult.subjects.reduce(
-                (total, item) =>
-                    total + Number(item.outOf),
-                0
-            );
+        const totalOutOf = savedResult.subjects.reduce(
+            (total, item) => total + Number(item.outOf),
+            0
+        );
 
         const percentage =
             totalOutOf > 0
@@ -218,262 +216,107 @@ function AdminResult() {
             percentage >= 20 ? "C" :
             "D";
 
-        const marksheetHTML = `
-
-        <!DOCTYPE html>
-
-        <html>
-
-        <head>
-
-            <meta charset="UTF-8">
-
-            <title>Marksheet</title>
-
-            <style>
-
-                body {
-                    font-family: Arial, sans-serif;
-                    background: #eeeeee;
-                    margin: 0;
-                    padding: 30px;
-                }
-
-                .marksheet {
-                    width: 800px;
-                    margin: auto;
-                    background: white;
-                    padding: 40px;
-                    border: 2px solid #222;
-                }
-
-                .school-name {
-                    text-align: center;
-                    font-size: 28px;
-                    font-weight: bold;
-                    margin-bottom: 5px;
-                }
-
-                .school-address {
-                    text-align: center;
-                    margin-bottom: 25px;
-                }
-
-                .title {
-                    text-align: center;
-                    font-size: 22px;
-                    font-weight: bold;
-                    margin-bottom: 25px;
-                    border-bottom: 2px solid black;
-                    padding-bottom: 10px;
-                }
-
-                .student-info {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 12px;
-                    margin-bottom: 25px;
-                }
-
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                }
-
-                th, td {
-                    border: 1px solid black;
-                    padding: 12px;
-                    text-align: center;
-                }
-
-                th {
-                    background: #eeeeee;
-                }
-
-                .summary {
-                    margin-top: 25px;
-                    display: flex;
-                    justify-content: space-between;
-                    font-weight: bold;
-                    gap: 20px;
-                }
-
-                .signature {
-                    margin-top: 80px;
-                    display: flex;
-                    justify-content: space-between;
-                }
-
-                @media print {
-
-                    body {
-                        background: white;
-                        padding: 0;
-                    }
-
-                    .marksheet {
-                        border: 2px solid black;
-                    }
-
-                }
-
-            </style>
-
-        </head>
-
-        <body>
-
-            <div class="marksheet">
-
-                <div class="school-name">
-                    LITTLE STARS ACADEMY
-                </div>
-
-                <div class="school-address">
-                </div>
-
-                <div class="title">
-                    MARKSHEET
-                </div>
-
-                <div class="student-info">
-
-                    <div>
-                        <strong>Name:</strong>
-                        ${savedResult.name}
-                    </div>
-
-                    <div>
-                        <strong>Class:</strong>
-                        ${savedResult.className}
-                    </div>
-
-                    <div>
-                        <strong>Roll:</strong>
-                        ${savedResult.roll}
-                    </div>
-
-                    <div>
-                        <strong>Registration:</strong>
-                        ${savedResult.registration}
-                    </div>
-
-                    <div>
-                        <strong>Exam Year:</strong>
-                        ${savedResult.examYear}
-                    </div>
-
-                </div>
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-                            <th>Sl. No.</th>
-                            <th>Subject</th>
-                            <th>Marks Obtained</th>
-                            <th>Out Of</th>
-                            <th>Grade</th>
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        ${savedResult.subjects.map(
-                            (item, index) => `
-
-                            <tr>
-
-                                <td>
-                                    ${index + 1}
-                                </td>
-
-                                <td>
-                                    ${item.subject}
-                                </td>
-
-                                <td>
-                                    ${item.marks}
-                                </td>
-
-                                <td>
-                                    ${item.outOf}
-                                </td>
-
-                                <td>
-                                    ${getGrade(item.marks, item.outOf)}
-                                </td>
-
-                            </tr>
-
-                        `).join("")}
-
-                    </tbody>
-
-                </table>
-
-                <div class="summary">
-
-                    <div>
-                        Total Marks:
-                        ${totalMarks} / ${totalOutOf}
-                    </div>
-
-                    <div>
-                        Percentage:
-                        ${percentage.toFixed(2)}%
-                    </div>
-
-                    <div>
-                        Grade:
-                        ${overallGrade}
-                    </div>
-
-                </div>
-
-                <div class="signature">
-
-                    <div>
-                        Class Teacher
-                    </div>
-
-                    <div>
-                        Principal
-                    </div>
-
-                </div>
-
-            </div>
-
-        </body>
-
-        </html>
-
-        `;
-
-        const blob = new Blob(
-            [marksheetHTML],
-            {
-                type: "text/html"
+        const doc = new jsPDF({
+            orientation: "portrait",
+            unit: "mm",
+            format: "a4"
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+
+        // Page border
+        doc.setLineWidth(0.8);
+        doc.rect(8, 8, pageWidth - 16, 281);
+
+        // School name
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        doc.text("LITTLE STARS ACADEMY", pageWidth / 2, 28, { align: "center" });
+
+        // Title
+        doc.setFontSize(16);
+        doc.text("MARKSHEET", pageWidth / 2, 40, { align: "center" });
+
+        doc.setLineWidth(0.5);
+        doc.line(15, 45, pageWidth - 15, 45);
+
+        // Student information
+        doc.setFontSize(11);
+
+        const info = [
+            ["Name:", String(savedResult.name), "Class:", String(savedResult.className)],
+            ["Roll:", String(savedResult.roll), "Registration:", String(savedResult.registration)],
+            ["Exam Year:", String(savedResult.examYear), "", ""]
+        ];
+
+        let y = 55;
+
+        info.forEach((row) => {
+
+            doc.setFont("helvetica", "bold");
+            doc.text(row[0], 15, y);
+            doc.setFont("helvetica", "normal");
+            doc.text(row[1], 40, y);
+
+            if (row[2]) {
+                doc.setFont("helvetica", "bold");
+                doc.text(row[2], 110, y);
+                doc.setFont("helvetica", "normal");
+                doc.text(row[3], 140, y);
             }
-        );
 
-        const url =
-            URL.createObjectURL(blob);
+            y += 8;
 
-        const link =
-            document.createElement("a");
+        });
 
-        link.href = url;
+        // Marks table
+        autoTable(doc, {
+            startY: y + 4,
+            margin: { left: 15, right: 15 },
+            head: [["Sl. No.", "Subject", "Marks Obtained", "Out Of", "Grade"]],
+            body: savedResult.subjects.map((item, index) => [
+                index + 1,
+                item.subject,
+                item.marks,
+                item.outOf,
+                getGrade(item.marks, item.outOf)
+            ]),
+            theme: "grid",
+            styles: {
+                halign: "center",
+                fontSize: 11,
+                cellPadding: 3,
+                lineColor: [0, 0, 0],
+                lineWidth: 0.2,
+                textColor: [0, 0, 0]
+            },
+            headStyles: {
+                fillColor: [238, 238, 238],
+                textColor: [0, 0, 0],
+                fontStyle: "bold"
+            }
+        });
 
-        link.download =
-            `${savedResult.name}-${savedResult.examYear}-marksheet.html`;
+        // Summary
+        const summaryY = doc.lastAutoTable.finalY + 14;
 
-        link.click();
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        doc.text(`Total Marks: ${totalMarks} / ${totalOutOf}`, 15, summaryY);
+        doc.text(`Percentage: ${percentage.toFixed(2)}%`, pageWidth / 2, summaryY, { align: "center" });
+        doc.text(`Grade: ${overallGrade}`, pageWidth - 15, summaryY, { align: "right" });
 
-        URL.revokeObjectURL(url);
+        // Signatures
+        const signY = Math.max(summaryY + 40, 250);
+
+        doc.setFont("helvetica", "normal");
+        doc.line(15, signY, 65, signY);
+        doc.text("Class Teacher", 15, signY + 6);
+
+        doc.line(pageWidth - 65, signY, pageWidth - 15, signY);
+        doc.text("Principal", pageWidth - 15, signY + 6, { align: "right" });
+
+        doc.save(`${savedResult.name}-${savedResult.examYear}-marksheet.pdf`);
 
     };
 
@@ -498,7 +341,7 @@ function AdminResult() {
                     <button
                         onClick={downloadMarksheet}
                     >
-                        Download Marksheet
+                        Download Marksheet (PDF)
                     </button>
 
                     <button
