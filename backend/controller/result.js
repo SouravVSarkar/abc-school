@@ -6,7 +6,6 @@ export const addStudentResult = async (req, res) => {
 
     try {
 
-        // Get data sent from frontend
         const {
             name,
             className,
@@ -21,9 +20,11 @@ export const addStudentResult = async (req, res) => {
         if (
             !name ||
             !className ||
-            !roll ||
+            roll === undefined ||
+            roll === null ||
             !registration ||
-            !examYear ||
+            examYear === undefined ||
+            examYear === null ||
             !subjects ||
             subjects.length === 0
         ) {
@@ -51,6 +52,60 @@ export const addStudentResult = async (req, res) => {
         }
 
 
+        // Calculate grade from marks
+        const updatedSubjects = subjects.map((item) => {
+
+            const marks = Number(item.marks);
+            const outOf = Number(item.outOf);
+
+            if (
+                isNaN(marks) ||
+                isNaN(outOf) ||
+                outOf <= 0 ||
+                marks < 0 ||
+                marks > outOf
+            ) {
+                throw new Error(
+                    `Invalid marks for subject: ${item.subject}`
+                );
+            }
+
+
+            const percentage = (marks / outOf) * 100;
+
+            let grade;
+
+            if (percentage >= 90) {
+                grade = "O+";
+            } else if (percentage >= 80) {
+                grade = "O";
+            } else if (percentage >= 70) {
+                grade = "A+";
+            } else if (percentage >= 60) {
+                grade = "A";
+            } else if (percentage >= 50) {
+                grade = "B+";
+            } else if (percentage >= 40) {
+                grade = "B";
+            } else if (percentage >= 30) {
+                grade = "C+";
+            } else if (percentage >= 20) {
+                grade = "C";
+            } else {
+                grade = "D";
+            }
+
+
+            return {
+                subject: item.subject,
+                marks: marks,
+                outOf: outOf,
+                grade: grade
+            };
+
+        });
+
+
         // Create new result
         const studentResult = new StudentResult({
 
@@ -58,13 +113,13 @@ export const addStudentResult = async (req, res) => {
 
             className: className,
 
-            roll: roll,
+            roll: Number(roll),
 
             registration: registration,
 
-            examYear: examYear,
+            examYear: Number(examYear),
 
-            subjects: subjects
+            subjects: updatedSubjects
 
         });
 
@@ -99,4 +154,3 @@ export const addStudentResult = async (req, res) => {
     }
 
 };
-
