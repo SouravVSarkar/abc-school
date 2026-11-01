@@ -37,12 +37,14 @@ function AdminResult() {
         "Economics"
     ];
 
-    // Grade calculation
+    // Grade calculation (frontend only, never sent to the database)
     const getGrade = (marks, outOf) => {
 
         if (
             marks === "" ||
             outOf === "" ||
+            marks === undefined ||
+            outOf === undefined ||
             Number(outOf) <= 0
         ) {
             return "";
@@ -51,11 +53,8 @@ function AdminResult() {
         const percentage =
             (Number(marks) / Number(outOf)) * 100;
 
- 
         if (percentage >= 75) return "A";
-     
         if (percentage >= 50) return "B";
-         
         if (percentage >= 25) return "C";
 
         return "D";
@@ -74,9 +73,9 @@ function AdminResult() {
     // Subject and marks
     const handleSubjectChange = (index, field, value) => {
 
-        const updatedSubjects = [...subjects];
-
-        updatedSubjects[index][field] = value;
+        const updatedSubjects = subjects.map((s, i) =>
+            i === index ? { ...s, [field]: value } : s
+        );
 
         setSubjects(updatedSubjects);
 
@@ -107,7 +106,7 @@ function AdminResult() {
 
     };
 
-    // Submit result to backend
+    // Submit result to backend (no grade is sent)
     const handleSubmit = async (e) => {
 
         e.preventDefault();
@@ -117,8 +116,7 @@ function AdminResult() {
         const updatedSubjects = subjects.map((item) => ({
             subject: item.subject,
             marks: Number(item.marks),
-            outOf: Number(item.outOf),
-            grade: getGrade(item.marks, item.outOf)
+            outOf: Number(item.outOf)
         }));
 
         const formData = {
@@ -405,7 +403,7 @@ function AdminResult() {
                                 </td>
 
                                 <td>
-                                    ${item.grade}
+                                    ${getGrade(item.marks, item.outOf)}
                                 </td>
 
                             </tr>
@@ -734,18 +732,13 @@ function AdminResult() {
                                         type="number"
                                         min="1"
                                         value={item.outOf}
-                                        onChange={(e) => {
-
-                                            const value =
-                                                e.target.value;
-
+                                        onChange={(e) =>
                                             handleSubjectChange(
                                                 index,
                                                 "outOf",
-                                                value
-                                            );
-
-                                        }}
+                                                e.target.value
+                                            )
+                                        }
                                         required
                                     />
 
