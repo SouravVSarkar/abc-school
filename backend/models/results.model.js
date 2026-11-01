@@ -25,17 +25,12 @@ const subjectSchema = new mongoose.Schema(
         grade: {
             type: String,
             required: true,
-            enum: [
-                "O+",
-                "O",
-                "A+",
-                "A",
-                "B+",
-                "B",
-                "C+",
-                "C",
-                "D"
-            ]
+        enum: [
+    "A",
+    "B",
+    "C",
+    "D"
+]
         }
     },
 
